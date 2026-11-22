@@ -44,16 +44,16 @@ Im **HSV**-Farbraum hat jedes Pixel drei andere Werte:
 
 #### Schritt 3: Maske bilden
 ```python
-mask = cv2.inRange(hsv, (35, 60, 40), (95, 255, 255))
+mask = cv2.inRange(hsv, (35, 35, 40), (95, 255, 255))
 ```
-Jedes Pixel mit H 35–95, S ≥ 60 und V ≥ 40 wird **weiß** (255), alles andere **schwarz** (0).
-- **S ≥ 60** wirft graue und weiße Flächen raus, z. B. Wände und Reflexe.
+Jedes Pixel mit H 35–95, S ≥ 35 und V ≥ 40 wird **weiß** (255), alles andere **schwarz** (0).
+- **S ≥ 35** wirft graue und weiße Flächen raus, z. B. Wände und Reflexe. Ursprünglich lag die Grenze bei 60, siehe Nachtrag 2 (Kunstlicht).
 - **V ≥ 40** wirft sehr dunkle Bereiche raus. Dort ist der Farbton unzuverlässig.
 
 #### Schritt 4: Aufräumen (Morphologie)
 ```python
-mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)   # Öffnen
-mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)  # Schließen
+mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3)))    # Öffnen
+mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((5, 15)))  # Schließen (breit, flach)
 ```
 - **Öffnen** entfernt einzelne weiße Störpunkte (Rauschen).
 - **Schließen** füllt kleine schwarze Löcher im Blatt, z. B. von Lichtreflexen.
@@ -63,7 +63,7 @@ mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)  # Schließen
 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 biggest = max(contours, key=cv2.contourArea)
 ```
-Eine **Kontur** ist der Umriss einer zusammenhängenden weißen Fläche. Das Skript nimmt die größte, denn das ist vermutlich das Blatt. Ist sie kleiner als 0,2 % des Bildes, gilt das als „kein Blatt gefunden“.
+Eine **Kontur** ist der Umriss einer zusammenhängenden weißen Fläche. Das Skript nimmt die größte, denn das ist vermutlich das Blatt. Ist sie kleiner als 0,05 % des Bildes (154 Pixel), gilt das als „kein Blatt gefunden“ (ursprünglich 0,2 %, siehe Nachträge).
 
 #### Schritt 6: Kennzahlen berechnen
 Aus den **Momenten** der Kontur ergibt sich ihr Schwerpunkt `(cx, cy)`. Daraus berechnet das Skript:
@@ -98,6 +98,50 @@ Aus den **Momenten** der Kontur ergibt sich ihr Schwerpunkt `(cx, cy)`. Daraus b
 *Tilt 80 / 85 / 90: Je flacher die Kamera schaut, desto tiefer liegt das Blatt im Bild (`pos_y` 0,29 → 0,48). Tilt 90 ist ein guter Suchwinkel.*
 
 ---
+
+### Nachtrag: Das Blatt aus 150 cm Entfernung
+
+Später (in Übung 6) lag das Blatt **150 cm** vor dem Auto, und die Erkennung fand es **nicht**, obwohl es im Bild klar zu sehen war:
+
+![Blatt aus 150 cm](images/cv_fern_150cm.jpg)
+*Nach der Korrektur erkannt: ein flacher Streifen von nur ~116 × 17 Pixeln, 0,1 % des Bildes.*
+
+Die Diagnose ergab **drei Ursachen auf einmal**:
+
+| Problem | Messwert | Lösung |
+|---|---|---|
+| **Mindestfläche zu groß** | Blatt hat nur ~540 Pixel, die Mindestfläche lag bei 614 (0,2 %) | auf **0,1 %** (307 Pixel) gesenkt |
+| **Öffnen mit 5×5 frisst dünne Streifen** | Der Streifen ist nur ~5–6 Pixel hoch. Nach 5×5-Öffnen blieben 222 von 541 Pixeln. | **3×3** zum Öffnen |
+| **Blatt in zwei Stücke zerfallen** | Ein Lichtreflex teilt den Streifen, jedes Stück hat ~270 Pixel und liegt damit unter der Mindestfläche | Schließen mit einem **breiten, flachen Filter (15 breit × 5 hoch)**, der waagerechte Lücken überbrückt |
+
+Außerdem ist die Farbe aus der Ferne **blasser**: Die Sättigung liegt bei ~96 statt 170–205 aus der Nähe. Mit der Untergrenze S ≥ 60 reicht das noch.
+
+Später wurde die Mindestfläche noch einmal auf **0,05 %** gesenkt: Mit 0,1 % lag das ferne Blatt (300–470 Pixel) genau an der Grenze und wurde mal erkannt, mal nicht. Fehlalarme durch kleine Flecken fängt seitdem der Horizont- und Formfilter aus Übung 5 ab.
+
+> **Lehre:** Ein Erkennungsverfahren, das man nur aus einer Entfernung getestet hat, ist nicht fertig. Die Parameter (Filtergröße, Mindestfläche) müssen zum **kleinsten** Fall passen, den man noch erkennen will. Und nach jeder Änderung prüft man, dass die alten Fälle noch funktionieren (hier: Bilder ohne Blatt bleiben ohne Treffer).
+
+### Nachtrag 2: Abends bei Kunstlicht
+
+Am Abend musste in der Wohnung das Licht angeschaltet werden, und plötzlich fand das Auto das Blatt aus 150 cm nicht mehr, obwohl es im Bild zu sehen war:
+
+![Blatt bei Kunstlicht](images/align_fern_kunstlicht.jpg)
+*Das Blatt liegt links vorne als blasser Streifen im Bild, die Erkennung meldet „KEIN GRUEN“.*
+
+Die Kamera meldet in ihren Metadaten, warum:
+
+| Messwert | Tageslicht | Kunstlicht abends |
+|---|---|---|
+| Helligkeit (Lux-Schätzung) | deutlich heller | **57 Lux** |
+| Farbtemperatur | ~5000 K | **2430 K** (sehr warm, das Bild wird rotstichig) |
+| Verstärkung (Gain) | klein | **8,0 = Maximum** (Bild rauscht) |
+| Belichtungszeit | wenige ms | **33 ms** (jede Bewegung verwischt) |
+| Sättigung des Blattes aus 150 cm | ~96 | **~48** (Median, ein Viertel der Pixel unter 34) |
+
+Mit S ≥ 60 blieben vom Blatt nur Krümel übrig. Die Lösung: **S ≥ 35**. Der Boden hat zwar inzwischen selbst eine hohe Sättigung (rotstichig), aber einen ganz anderen **Farbton** (H 0–18). Der Farbton trennt Blatt und Boden auch bei schlechtem Licht zuverlässig. Mit S ≥ 35 wird das Blatt im selben Bild als ein Stück erkannt (86 × 11 Pixel).
+
+> **Lehre:** Licht ist ein Parameter, auch wenn er nicht im Code steht. Wer nur bei Tageslicht testet, hat bei Kunstlicht ein anderes System. Gute Merkmale (hier: der Farbton H) sind robust gegen Licht, schwache (hier: die Sättigung S) nicht.
+
+**Messfehler am Rande:** Die erste Messung der Sättigung erfolgte auf den gespeicherten Debug-Bildern. Dort sind aber Kontur und Linien **eingezeichnet**, und die Bilder sind stark komprimiert. Das verfälscht die Farbwerte. Für Farbmessungen immer das **Rohbild** verwenden.
 
 ## Teil B – Exercise
 

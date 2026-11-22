@@ -29,9 +29,13 @@ DEBUG = Path.home() / "smartcar" / "debug"
 DEBUG.mkdir(parents=True, exist_ok=True)
 
 # HSV-Grenzen für Grün (OpenCV: H 0-179, S 0-255, V 0-255)
-GREEN_LOW = np.array([35, 60, 40])
+GREEN_LOW = np.array([35, 35, 40])     # S ab 35: bei Kunstlicht (57 Lux, 2430 K) hat das Blatt aus 150 cm
+                                       # nur S ~48 (Median). Mit S >= 60 blieben nur Krümel übrig.
+                                       # Der Boden (H 0-18) ist weit weg vom Grün, das bleibt unkritisch.
 GREEN_HIGH = np.array([95, 255, 255])  # Blatt ist blaugrün (H ~80-87), Blau beginnt ~100
-MIN_AREA_FRACTION = 0.002  # kleinere Flecken werden ignoriert (0,2 % des Bildes)
+MIN_AREA_FRACTION = 0.0005  # kleinere Flecken werden ignoriert (0,05 % des Bildes = 154 Pixel).
+                            # Ursprünglich 0,2 %, dann 0,1 %: Das Blatt aus 150 cm (~300-470 Pixel) lag genau an
+                            # der Grenze und wurde mal erkannt, mal nicht. Fehlalarme fängt der Horizont-Filter ab.
 
 
 def capture(tilt: int, pan: int) -> np.ndarray:
@@ -49,17 +53,32 @@ def capture(tilt: int, pan: int) -> np.ndarray:
     return frame
 
 
-def detect_green(frame: np.ndarray):
+def detect_green(frame: np.ndarray, accept=None):
+    """Größte grüne Fläche finden.
+
+    accept: optionale Funktion accept(bbox) -> bool. Dann wird die größte Fläche genommen,
+    die diesen Test besteht (z. B. "flach und unterhalb des Horizonts" = Blatt auf dem Boden).
+    So gewinnt ein Lichtreflex nicht, nur weil er größer ist als das Blatt.
+    """
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, GREEN_LOW, GREEN_HIGH)
-    kernel = np.ones((5, 5), np.uint8)
+    # 3x3 statt 5x5: Aus 150 cm ist das Blatt nur ein ~5-6 Pixel hoher Streifen,
+    # ein 5x5-Öffnen würde ihn größtenteils wegfressen.
+    kernel = np.ones((3, 3), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)   # kleine Störpunkte weg
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)  # Löcher im Blatt schließen
+    # Löcher und Lücken im Blatt schließen. Breiter, flacher Filter (5 hoch, 15 breit): Ein fernes Blatt
+    # ist ein flacher Streifen, den Lichtreflexe in Stücke teilen - die waagerechten Lücken werden überbrückt.
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((5, 15), np.uint8))
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
         return mask, None
-    biggest = max(contours, key=cv2.contourArea)
+    candidates = sorted(contours, key=cv2.contourArea, reverse=True)
+    if accept is not None:
+        candidates = [c for c in candidates if accept(cv2.boundingRect(c))]
+        if not candidates:
+            return mask, None
+    biggest = candidates[0]
     h, w = mask.shape
     area = cv2.contourArea(biggest)
     if area < MIN_AREA_FRACTION * w * h:

@@ -24,7 +24,24 @@ Jede Übungsdatei besteht aus zwei Teilen:
 | 4 | [Um 90° drehen – ohne Gyroskop](turn_exercise_1.md) ⭐ | Visuelle Odometrie: ORB-Features, Matching, Lochkamera-Modell, Regelkreis | **ja** |
 | 4b | *geplant:* Kontinuierlich drehen mit laufender Überwachung | Optischer Fluss, hohe Bildrate, Regler mit Bremsen | **ja** |
 | 5 | [Blatt suchen und ausrichten](align_exercise_1.md) | Zustandsautomat, Visual Servoing, Kalibrierung des Kamerakopfs | **ja** |
-| 6 | [Hinfahren und parken](park_exercise_1.md) *(vorbereitet, noch nicht getestet)* | Toter Winkel, Koppelnavigation, Kalibrierung | **ja** |
+| 5b | [Kamera und Fahrzeug kalibrieren](calibration_exercise_1.md) | Pan-Nullpunkt, Geschwindigkeit, toter Winkel, Bodenmodell, korrelierte Parameter | Kamerakopf (+ einmal kurz fahren) |
+| 6 | [Hinfahren und parken](park_exercise_1.md) | Toter Winkel, Koppelnavigation, Bezugspunkt, Fehlersuche | **ja** |
+| 7 | [Die ganze Mission](mission_exercise_1.md) ⭐ | Umschauen, suchen, ausrichten, hinfahren, parken in einem Programm | **ja** |
+
+## Bekannte Hardware-Schwierigkeiten
+
+Die Übungen zeigen bewusst auch, was an echter Hardware schiefgeht. Bei diesem Auto:
+
+| Problem | Auswirkung | Behandelt in |
+|---|---|---|
+| **4WD ohne Lenkung, Reifen nicht ideal** | Beim Drehen rutschen die Räder, die Drehrate schwankt stark (42–62°/s) | [Übung 4](turn_exercise_1.md) |
+| **Kein Gyroskop, keine Radencoder** | Drehwinkel und Strecke müssen anders gemessen werden (Kamera, Zeit) | [Übung 4](turn_exercise_1.md), [Übung 6](park_exercise_1.md) |
+| **Kamerakopf verdreht** | Pan 90 schaut ~18° nach links, geradeaus = Pan 66 | [Übung 5](align_exercise_1.md) |
+| **Kamerakopf instabil** | Kabel verschieben sich beim Drehen, verhaken sich und verkippen den Kopf. Die Kalibrierung kann sich ändern. | [Übung 5](align_exercise_1.md) |
+| **Spiegelnder Laminatboden** | Lichtreflexe stören die Erkennung markanter Punkte | [Übung 4](turn_exercise_1.md) |
+| **Akku** | Tiefentladen gibt es keine Kraft, die Spannung sinkt unter Last. Einzelne ADC-Messungen springen (z. B. 6,6 V statt 7,0 V). | [Übung 3](drive_exercise_1.md), [Übung 7](mission_exercise_1.md) |
+| **Licht** | Bei Kunstlicht: lange Belichtung (Bewegungsunschärfe), Rauschen, blasse Farben | [Übung 2](cv_exercise_1.md), [Übung 5](align_exercise_1.md) |
+| **Anfahrverzug** | Kurze Fahrimpulse fahren deutlich weniger als Geschwindigkeit × Zeit | [Übung 6](park_exercise_1.md) |
 
 ## Voraussetzungen
 

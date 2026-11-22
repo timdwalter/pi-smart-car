@@ -75,6 +75,10 @@ spannung = Adc().recvADC(2) * 3
 
 Unter Last (Motoren an) sinkt die Spannung kurz um ca. 0,3–0,5 V, das ist normal.
 
+**Einzelmessungen springen:** Einmal wurden 6,60 V gemessen, direkt danach 6,99–7,14 V. Für Entscheidungen (z. B. Abbruch bei zu wenig Spannung) den **Median aus mehreren Messungen** nehmen, wie in `mission_exercise_1.py`.
+
+**Für das Parken** ist die Blindfahrt bei ~7,0–7,3 V kalibriert. Darunter fährt das Auto langsamer, die Reststrecke wird zu kurz.
+
 `ADC.py` enthält zusätzlich `calcPowerLevel(spannung)`. Die Funktion rechnet 5,6–8,4 V in 0–1 um (lokale Änderung, nicht von Freenove).
 
 **Erfahrung:** Bei ca. 4 V (tiefentladen) haben sich die Räder kaum bewegt. Tiefentladene Li-Ion-Zellen beim Laden beobachten. Werden sie heiß oder halten sie keine Spannung, müssen sie ersetzt werden.
@@ -169,6 +173,22 @@ Am Ende fährt der gescannte Kanal zurück auf 90.
 
 ---
 
+### ⚠️ Kamerakopf ist mechanisch instabil
+
+Der Kamerakopf (Pan/Tilt-Servos mit Kamera) ist **mechanisch nicht stabil**:
+- **Kabel im Weg:** Das Flachbandkabel der Kamera und die Servokabel verschieben sich, wenn sich der Kopf oder das Auto dreht. Sie können sich am Kopf verhaken und ihn **verkippen**. Dann ist das Bild schief (Roll), z. B. laufen Laminatfugen schräg durchs Bild.
+- **Verdrehter Nullpunkt:** Bei Pan 90 schaut der Kopf ~18° nach links (kalibriert: geradeaus = Pan 66). Das kann sich durch Kabelzug, Stöße oder Servo-Spiel **wieder ändern**.
+- **Servo-Spiel:** Je nachdem, aus welcher Richtung der Servo einen Winkel anfährt, steht er minimal anders.
+
+**Folgen:**
+- `PAN_CENTER` (Abschnitt Pan) gilt nur, solange der Kopf nicht verrutscht. **Vor jeder Session mit Ausrichten/Parken kurz prüfen:** Blatt gerade vor das Auto legen, `python3 align_exercise_1.py rechts 0` (Trockenlauf). Liegt das Blatt nicht bei ~0°, neu kalibrieren (`calibrate_pan.py`).
+- Ein schiefes Bild (Roll) stört die Grün-Erkennung kaum, verfälscht aber Abstandsschätzungen über `pos_y` und das Ablesen des toten Winkels.
+
+**Abhilfe (mechanisch):**
+- Kabel mit etwas **Spiel** und so verlegen, dass sie beim Schwenken nicht am Kopf ziehen oder hängen bleiben. Mit Kabelbinder oder Klebeband als Zugentlastung am Chassis fixieren.
+- Schrauben der Servo-Arme prüfen.
+- Nach dem Umbau `calibrate_pan.py` erneut ausführen.
+
 ## 7. Kamera
 
 ```python
@@ -241,12 +261,19 @@ export MSYS_NO_PATHCONV=1
 | `cv_exercise_1.py` | Grünes Blatt im Bild erkennen | `python3 cv_exercise_1.py [tilt=90] [pan=90]` |
 | `drive_exercise_1.py` | Vor- und zurückfahren mit Akku- und Ultraschall-Check | `python3 drive_exercise_1.py [speed=1500] [sekunden=2]` (speed 0 = Trockenlauf) |
 | `turn_exercise_1.py` | Auf der Stelle um einen Winkel drehen, gemessen per Kamera | `python3 turn_exercise_1.py [winkel=90] [links\|rechts] [speed=2000]` (speed 0 = Trockenlauf) |
+| `align_exercise_1.py` | Blatt suchen und ausrichten | `python3 align_exercise_1.py [rechts\|links] [speed=2000]` (speed 0 = Trockenlauf) |
+| `park_exercise_1.py` | Hinfahren und parken (vorher ausrichten) | `python3 park_exercise_1.py [speed=1500]` |
+| `mission_exercise_1.py` | Alles: umschauen, suchen, ausrichten, parken | `python3 mission_exercise_1.py [dreh=2000] [fahr=1500]` (0 = Trockenlauf) |
+| `calibrate_pan.py` | Pan-Nullpunkt kalibrieren | `python3 calibrate_pan.py 70 95 5` |
+| `ground_calibration.py` | Bodenmodell für Tilt 110 | `python3 ground_calibration.py messen <cm> \| auswerten \| reset` |
+| `pulse_calibration.py` | Strecke kurzer Fahrimpulse messen | `python3 pulse_calibration.py [dauer=0.16] [anzahl=3]` |
 
 Ausführliche Erklärungen mit Aufgaben: [docs/exercises/](exercises/README.md)
 
 ### Grün-Erkennung (`cv_exercise_1.py`)
 - Ablauf: Bild (640×480) → HSV → `inRange` → Morphologie (Öffnen/Schließen) → größte Kontur → Schwerpunkt
-- **HSV-Bereich:** H 35–95, S ≥ 60, V ≥ 40 (OpenCV-Skala H 0–179)
+- **HSV-Bereich:** H 35–95, **S ≥ 35**, V ≥ 40 (OpenCV-Skala H 0–179). S war ursprünglich 60, bei Kunstlicht hat das Blatt aus 150 cm aber nur S ~48.
+- **Mindestfläche:** 0,05 % des Bildes (154 Pixel)
 - **Gemessene Farben (2026-11-22):**
   | Objekt | HSV |
   |---|---|
@@ -272,7 +299,8 @@ Ausführliche Erklärungen mit Aufgaben: [docs/exercises/](exercises/README.md)
 ### Fahren (`drive_exercise_1.py`)
 - 1500 für 1 s vor und zurück funktioniert. Beim Anfahren bricht der Akku kurz von ~7,9 V auf ~7,3 V ein.
 - Ultraschall vorne zeigt im freien Raum ~150 cm.
-- Geschwindigkeit in cm/s ist **noch nicht kalibriert**.
+- Geschwindigkeit: Speed 1500 → ~50 cm in 1 s. Bei kurzen Impulsen gehen ~0,12 s für das Anfahren verloren (siehe Parken).
+- Das Auto driftet beim Geradeausfahren leicht nach links.
 
 ### Drehen ohne Gyroskop (`turn_exercise_1.py`)
 - **Sensorlage:** Am I2C-Bus (`sudo i2cdetect -y 1`) hängen nur `0x40` (PCA9685, Motoren/Servos) und `0x48` (ADS7830, ADC). Es gibt **kein Gyroskop/IMU** (MPU-6050 wäre `0x68`) und keine Radencoder.
@@ -320,5 +348,42 @@ Nulldurchgang zwischen 65 und 70 → **66**. Ab Pan 90 wird die Kurve flacher, w
 - Testlauf 2026-11-22: Blatt ~115° rechts hinter dem Auto, nach 7 Suchschritten gefunden, nach 2 Korrekturen ausgerichtet (+2,8°).
 - **Achtung:** Dieser Lauf lief noch mit Pan 90. Wegen des verdrehten Kamerakopfs (Pan 90 = ~18° links) zeigte das Auto danach deutlich rechts am Blatt vorbei. Seitdem nutzt das Skript `PAN_CENTER`.
 
+### Ausrichten: Robustheit (Stand 2026-11-22)
+- Form- und Horizont-Filter `looks_like_sheet`: Blatt muss ≥ 1,5× so breit wie hoch sein und mit der Unterkante unter y = 72 (15 %) liegen. 25 % war zu streng, weil der wacklige Kopf den Horizont verschiebt.
+- Blatt kurz weg → erst zweites Foto, dann dort suchen, wo es zuletzt war.
+- Toleranz 4°: Der kürzeste Drehimpuls (0,08 s) dreht ~8°, mit 3° pendelte das Auto.
+
 ### Parken (`park_exercise_1.py`)
-- Vorbereitet, **noch nicht getestet**. Es fehlen `SPEED_CM_PER_S`, `TOTER_WINKEL_CM` und `KAMERA_VOR_MITTE_CM`. Hilfe: `python3 park_exercise_1.py kalibrieren`.
+- Getestet 2026-11-22 aus 100 und 150 cm: Das Auto steht auf dem Blatt, Abweichung längs 4–6 cm.
+- Ablauf: Tilt 90, 0,4-s-Impulse → bei `pos_y > 0,6` oder Blatt unten am Rand Tilt 110 → 0,2-s-Impulse → Vorderkante am unteren Bildrand → Abstand der **Hinterkante** per Bodenmodell → Rest blind fahren.
+- `rest_cm = d_hinterkante − 21/2 + 7,75`, Rückfallebene `5,4 + 21/2 + 7,75` (erster Entwurf hatte hier einen Vorzeichenfehler).
+- `rest_s = rest_cm / 50 + 0,12` (**Anfahrverzug 0,12 s**: 0,16 s fahren ≈ 2 cm, nicht 8 cm).
+- Nach jedem Impuls 0,8 s warten und ein Bild verwerfen (Bewegungsunschärfe bei Kunstlicht).
+- Blatt-Lage: A4 **quer** zur Fahrtrichtung (21 cm in Fahrtrichtung). Liegt es hochkant: `BLATT_LAENGE_CM = 29.7`.
+- Das Blatt muss **fixiert** sein (Klebeband), sonst können die Räder es wegschieben.
+
+### Mission (`mission_exercise_1.py`)
+- Alles in einem: Kopf schwenken (0°, ±25°, ±45° → ca. ±72° Sicht), suchen, ausrichten, anfahren, parken. Dauer ~25 s.
+- `python3 mission_exercise_1.py 0` = Trockenlauf (nur umschauen).
+- Pan außerhalb 65–85 ist nicht kalibriert, die Winkel aus dem Kopfschwenk sind dort nur grob. Für die Drehrichtung reicht es.
+
+### Weitere Werkzeuge
+- `pulse_calibration.py [dauer] [anzahl]`: misst mit der Hinterkante, wie weit ein kurzer Fahrimpuls wirklich fährt. Das Auto muss so stehen, dass die Hinterkante bei Tilt 110 deutlich mehr als 7 cm entfernt ist, sonst verschwindet sie nach einem Impuls im toten Winkel.
+
+### Boden-Kalibrierung (`ground_calibration.py`), Tilt 110
+- Methode: Vordere Blattkante auf 5 / 10 / 20 cm ab Autokante legen und die Bildzeile in der **Bildmitte** messen. Modell `d = h / tan(α + atan((y − 240)/f))`.
+- Messpunkte: 5 cm → y 402, 10 cm → y 250, 20 cm → y 133 (Linse 1,75 cm hinter der Autokante).
+- Höhe und Brennweite sind aus Nahbereichs-Punkten **nicht trennbar**. Deshalb f = 634 px fest (durch Übung 4 bestätigt). Ergebnis: **h = 5,2 cm, Neigung 23,0°, RMS 0,05 cm**. Grob mit dem Lineal gemessen waren „etwa 7 cm“.
+- **Toter Winkel: 5,4 cm ab Linse = 3,7 cm ab Autokante.** Robust: 2,4–3,7 cm für jede plausible Höhe.
+- Werte in `car_config.py`: `CAMERA_HEIGHT_CM`, `TILT_NEAR_PITCH_DEG`, `DEAD_ZONE_FROM_LENS_CM`, `LENS_BEHIND_FRONT_CM`.
+- Abmessungen: Auto ~19 cm lang, Linse 7,75 cm vor der Automitte.
+
+### Grün-Erkennung aus der Ferne
+- Aus 150 cm ist das Blatt ein ~116 × 17 Pixel großer Streifen (0,1 % des Bildes) mit blasserer Farbe (S ~96).
+- Deshalb: Öffnen 3×3, Schließen 15×5 (überbrückt Reflex-Lücken), Mindestfläche 0,05 %.
+
+### Licht
+- Abends bei Kunstlicht meldet die Kamera ~57 Lux, 2430 K, Gain 8 (Maximum) und 33 ms Belichtung. Folgen: Bewegungsunschärfe, Rauschen, blasse Farben.
+- Gegenmaßnahmen im Code: Nach Bewegungen warten (0,4–0,8 s) und ein Bild verwerfen, bei „kein Blatt“ neu fotografieren, Sättigungsgrenze S ≥ 35.
+- Metadaten auslesen: `cam.capture_metadata()` → `ExposureTime`, `AnalogueGain`, `Lux`, `ColourTemperature`.
+- Farbwerte nie auf Debug-Overlays messen (Zeichnungen, Kompression), sondern auf Rohbildern.

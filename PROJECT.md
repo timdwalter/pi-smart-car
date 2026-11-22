@@ -57,11 +57,23 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 - 2026-11-22: Dreh-Übung `pi/turn_exercise_1.py`: 90° per visueller Odometrie (kein Gyro vorhanden), 4 Läufe (87–91° gemessen, real knapp unter 90°) ✅. Bildwinkel nicht exakt kalibriert. Reifen und Laminat lassen die Drehrate stark schwanken (42–62°/s).
 - 2026-11-22: Übung 5 `pi/align_exercise_1.py`: Blatt ~115° rechts hinter dem Auto gefunden und ausgerichtet ✅
 - 2026-11-22: **Kamerakopf verdreht**: Pan 90 schaut ~18° nach links. Größere Pan-Werte = **links** (vorher falsch dokumentiert). Kalibriert mit `pi/calibrate_pan.py`: **geradeaus = Pan 66** ✅ (zentral in `pi/car_config.py`).
-- 2026-11-22: Übung 6 `pi/park_exercise_1.py` vorbereitet, **noch nicht getestet**. Kalibrierwerte fehlen: Geschwindigkeit cm/s, toter Winkel bei Tilt 110, Kamera-Abstand zur Automitte.
+- 2026-11-22: **Kamerakopf mechanisch instabil**: Kabel verschieben sich beim Drehen, verhaken sich am Kopf und verkippen ihn (schiefes Bild). `PAN_CENTER` vor jeder Session prüfen. Kabelführung bzw. Zugentlastung verbessern (offen).
+- 2026-11-22: Fahrgeschwindigkeit gemessen: Speed 1500 für 1,0 s ≈ **50 cm** (inkl. Anfahren).
+- 2026-11-22: Boden-Kalibrierung (`pi/ground_calibration.py`): toter Winkel 3,7 cm ab Autokante, Kamerahöhe 5,2 cm, Neigung 23° bei Tilt 110 ✅
+- 2026-11-22: Grün-Erkennung für Fernbereich verbessert (150 cm): Öffnen 3×3, Schließen 15×5, Mindestfläche 0,1 % ✅
+- 2026-11-22: Übung 6 `pi/park_exercise_1.py` kalibriert (50 cm/s, toter Winkel 5,4 cm ab Linse, Linse 7,75 cm vor Mitte, Blatt 21 cm quer).
+- 2026-11-22 (abends, Kunstlicht): Übung 5 robuster gemacht: Form-/Horizont-Filter, zweites Foto bei Verlust, Suche Richtung „zuletzt gesehen“, Toleranz 4°. Grün-Erkennung S ≥ 35 (Kunstlicht), Mindestfläche 0,05 %.
+- 2026-11-22: **Übung 6 getestet** ✅: aus 100 und 150 cm steht das Auto auf dem Blatt, 4–6 cm Abweichung längs. Gefunden und behoben: Vorzeichenfehler in der Blindstrecke, Anfahrverzug 0,12 s, zu später Tilt-Wechsel, Bewegungsunschärfe, Reflex-Fehlalarm. Reststrecke jetzt über die Hinterkante des Blattes (Bodenmodell).
+- 2026-11-22: **Übung 7 `pi/mission_exercise_1.py`: Stufe 1 komplett** ✅ Umschauen per Kopfschwenk, suchen, ausrichten, anfahren, parken in ~25 s. 2 von 2 Läufen erfolgreich (Blatt bei +42° bzw. +61°, ~150 cm). `align()` und `park()` sind jetzt wiederverwendbare Funktionen.
+- Doku: neue Übung 5b `docs/exercises/calibration_exercise_1.md` (Kalibrierung mit allen Umwegen)
 - Freenove-Repo auf dem Pi hat lokale Änderungen: `test.py` (Motortest umgebaut), `ADC.py` (`calcPowerLevel()`)
 
 ## Weitere offene Punkte
 - [ ] **Vor Zugriff durch Kollegen:** Pi ins Gast- oder IoT-WLAN umziehen. Begründung: `pi` hat sudo ohne Passwort und das Passwort ist bekannt. Damit wären das WLAN-Passwort im Klartext (`/etc/NetworkManager/system-connections/`) und das ganze Heimnetz über den Pi erreichbar.
+- [ ] Kabel am Kamerakopf mit Spiel verlegen und Zugentlastung anbringen, danach `calibrate_pan.py` erneut ausführen
+- [ ] Akku laden (zuletzt ~7,0 V), danach Parkgenauigkeit mit vollem Akku prüfen (Anfahrverzug/Speed sind bei ~7 V gemessen)
+- [ ] Bodenmodell mit Punkten bis ~30 cm erweitern (Hinterkante liegt beim Parken bei 21–30 cm)
+- [ ] Optional: Video der Mission in `docs/exercises/` verlinken
 - [ ] Spätere Bodenumgebung klären: Untergrund, Blattgröße (A4?), Hindernisse, ob das Blatt außer Sicht liegen kann
 
 ## Ideen für später
@@ -70,8 +82,8 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 ## Vorgehen
 1. ✅ **Bestandsaufnahme per SSH:** Python, picamera2, OpenCV und Freenove-Treiber prüfen.
 2. ✅ **Smoke-Test:** Kamerabild aufnehmen, Motoren kurz ansteuern.
-3. ⏳ **Grün-Erkennung (OpenCV, HSV):** Debug-Bilder speichern und am PC ansehen.
-4. ⏳ **Fahrlogik als Zustandsautomat:** (Bausteine Fahren ✅ und Drehen ✅ vorhanden)
+3. ✅ **Grün-Erkennung (OpenCV, HSV):** Debug-Bilder speichern und am PC ansehen.
+4. ✅ **Fahrlogik als Zustandsautomat:** `pi/mission_exercise_1.py` (Stufe 1 erreicht)
    - `SUCHEN`: auf der Stelle drehen, bis Grün im Bild ist
    - `AUSRICHTEN`: drehen, bis das Blatt horizontal mittig im Bild liegt
    - `ANFAHREN`: geradeaus fahren und dabei nachkorrigieren

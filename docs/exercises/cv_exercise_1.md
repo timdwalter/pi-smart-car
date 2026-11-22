@@ -187,6 +187,7 @@ Ein grünes Blatt Papier ein bis zwei Meter vor das Auto auf den Boden legen, ge
   | 85 | 0,38 | 0,7 % |
   | 90 | 0,29 | 0,8 % |
   | 100 | 0,11 | 1,0 % |
+
   Bei Tilt 100 klebt das Blatt am oberen Bildrand. **Tilt 90** ist ein guter Suchwinkel. Die Kamera sitzt nur ca. 10 cm über dem Boden, deshalb sieht man ein entferntes Blatt sehr flach von der Seite.
 
 </details>

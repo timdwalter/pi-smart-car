@@ -2,6 +2,7 @@
 
 > - Bedienung, Hardware-Belegung, Befehle: **[docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)**
 > - Übungen (z. B. für eine Hackerschool): **[docs/exercises/](docs/exercises/README.md)**
+> - **Lehrbuch** (Einstieg, alle Übungen mit Lösungen, Projektaufgaben, Glossar als eine HTML-Datei): `python tools/build_lehrbuch.py` → `dist/SmartCar_Lehrbuch.html`, Rahmentexte in [docs/lehrbuch/](docs/lehrbuch/)
 > - Neue Mitentwickler: **[docs/KOLLEGEN_ANLEITUNG.md](docs/KOLLEGEN_ANLEITUNG.md)** (zum Verschicken)
 > - Admin (Tailscale, Kollegen freischalten, Sicherheit, Draufsicht-Kamera): **[docs/ADMIN_REMOTE.md](docs/ADMIN_REMOTE.md)**
 
@@ -65,6 +66,7 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 - 2026-11-22 (abends, Kunstlicht): Übung 5 robuster gemacht: Form-/Horizont-Filter, zweites Foto bei Verlust, Suche Richtung „zuletzt gesehen“, Toleranz 4°. Grün-Erkennung S ≥ 35 (Kunstlicht), Mindestfläche 0,05 %.
 - 2026-11-22: **Übung 6 getestet** ✅: aus 100 und 150 cm steht das Auto auf dem Blatt, 4–6 cm Abweichung längs. Gefunden und behoben: Vorzeichenfehler in der Blindstrecke, Anfahrverzug 0,12 s, zu später Tilt-Wechsel, Bewegungsunschärfe, Reflex-Fehlalarm. Reststrecke jetzt über die Hinterkante des Blattes (Bodenmodell).
 - 2026-11-22: **Übung 7 `pi/mission_exercise_1.py`: Stufe 1 komplett** ✅ Umschauen per Kopfschwenk, suchen, ausrichten, anfahren, parken in ~25 s. 2 von 2 Läufen erfolgreich (Blatt bei +42° bzw. +61°, ~150 cm). `align()` und `park()` sind jetzt wiederverwendbare Funktionen.
+- 2026-11-22: **Lehrbuch** für IoT-Hacking-Kollegen: `tools/build_lehrbuch.py` baut aus Kollegen-Anleitung, Übungen, Operations Manual und Rahmentexten (`docs/lehrbuch/`: Vorwort, Auto im Überblick, Kapitel-Einleitungen, Projektaufgaben, Glossar) eine HTML-Datei mit Inhaltsverzeichnis und eingebetteten Bildern ✅. Hacker-School-Fassung und Vortrag sind zurückgestellt.
 - Doku: neue Übung 5b `docs/exercises/calibration_exercise_1.md` (Kalibrierung mit allen Umwegen)
 - Freenove-Repo auf dem Pi hat lokale Änderungen: `test.py` (Motortest umgebaut), `ADC.py` (`calcPowerLevel()`)
 

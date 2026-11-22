@@ -7,6 +7,7 @@ Bedienung, Hardware-Belegung (Motoren, Servos, Kamera, Akku) und bekannte Stolpe
 @docs/OPERATIONS_MANUAL.md
 
 - Neue Übungsskripte in `pi/` bekommen eine passende Erklärung in `docs/exercises/<name>.md` und einen Eintrag in `docs/exercises/README.md`. Aufbau jeder Datei: **Lernziele**, dann **Teil A – Lecture** (Problem, Theorie Schritt für Schritt, Code, Bilder und Ergebnisse echter Testläufe), dann **Teil B – Exercise** (Sicherheit, Ausprobieren, Aufgaben, Lösungen in `<details>`). Bilder aus Testläufen dauerhaft in `docs/exercises/images/` ablegen. Die Texte sind neutral formuliert, ohne „du“.
+- Aus der Doku wird das **Lehrbuch** gebaut (`tools/build_lehrbuch.py` → `dist/SmartCar_Lehrbuch.html`). Neue Übungen dort in `BOOK` im passenden Kapitel eintragen, neue Fachbegriffe ins Glossar `docs/lehrbuch/90_glossar.md`. Rahmentexte (Vorwort, Kapitel-Einleitungen, Projektaufgaben) liegen in `docs/lehrbuch/`. Markdown CommonMark-konform schreiben: Leerzeile vor und nach Tabellen und Listen. Nach Doku-Änderungen das Buch neu bauen und auf Warnungen achten.
 - Neue Erkenntnisse zur Bedienung oder Hardware (gemessene Werte, Belegungen, Fehler und Lösungen) im Operations Manual eintragen, den Projektfortschritt im Statuslog von `PROJECT.md`.
 
 ## Arbeitsweise

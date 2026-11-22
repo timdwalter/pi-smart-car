@@ -4,6 +4,8 @@ Kleine, aufeinander aufbauende Übungen rund um den Freenove 4WD SmartCar (Raspb
 
 **Langfristiges Ziel:** Das Auto erkennt ein grünes Blatt Papier auf dem Boden, dreht sich dorthin, fährt hin und parkt darauf.
 
+Alle Übungen gibt es zusammen mit Einstieg, Projektaufgaben und Glossar auch als **Lehrbuch** in einer HTML-Datei: `python tools/build_lehrbuch.py` erzeugt `dist/SmartCar_Lehrbuch.html`.
+
 ## Aufbau jeder Übung
 
 Jede Übungsdatei besteht aus zwei Teilen:

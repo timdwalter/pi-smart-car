@@ -293,6 +293,7 @@ Ausführliche Erklärungen mit Aufgaben: [docs/exercises/](exercises/README.md)
   | 85 | 0,38 | 0,7 % |
   | 90 | 0,29 | 0,8 % |
   | 100 | 0,11 | 1,0 % |
+
   Bei Tilt 100 klebt das Blatt am oberen Bildrand, deshalb wird mit **Tilt 90 gesucht**.
 - Die Kamera sitzt nur ca. 10 cm über dem Boden. Ein entferntes Blatt erscheint deshalb immer als flacher Streifen.
 

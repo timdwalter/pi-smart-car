@@ -1,5 +1,8 @@
 # SmartCar – Projektübersicht
 
+> - Neue Mitentwickler: **[docs/KOLLEGEN_ANLEITUNG.md](docs/KOLLEGEN_ANLEITUNG.md)** (zum Verschicken)
+> - Admin (Tailscale, Kollegen freischalten, Sicherheit, Draufsicht-Kamera): **[docs/ADMIN_REMOTE.md](docs/ADMIN_REMOTE.md)**
+
 ## Setup für neue Entwickler
 1. Repo klonen
 2. Tailscale installieren und Zugriff auf das Gerät `smartcar` bekommen (Share/Einladung durch den Besitzer)
@@ -56,7 +59,11 @@ Das Auto soll autonom:
 - **Tailscale** 1.104.7 installiert (2026-11-22), Hostname im Tailnet: `smartcar`, Tailscale-IP `100.77.136.52`. Verbunden, der Windows-PC ist ebenfalls im Tailnet. SSH über `smartcar` getestet ✅. Login über `sudo tailscale up --hostname=smartcar`.
   - Fernzugriff von außerhalb: `.env` → `PI_HOST` auf die Tailscale-IP (100.x.y.z) oder `smartcar` (MagicDNS) setzen. Der PC muss dafür ebenfalls in Tailscale sein.
 - SSH-Helfer: `.venv/Scripts/python.exe tools/pi.py run "<befehl>"` bzw. `put`/`get`
+- [ ] **Vor Zugriff durch Kollegen:** Pi ins Gast- oder IoT-WLAN umziehen. Begründung: `pi` hat sudo ohne Passwort und das Passwort ist bekannt. Damit wären das WLAN-Passwort im Klartext (`/etc/NetworkManager/system-connections/`) und das ganze Heimnetz über den Pi erreichbar.
 - [ ] Spätere Bodenumgebung klären: Untergrund, Blattgröße (A4?), Hindernisse, ob das Blatt außer Sicht liegen kann
+
+## Ideen für später
+- **Draufsicht-Kamera** über dem Fahrbereich, remote über Tailscale ansehbar. Kamera und Lagerort des Autos sind noch offen. Details: [docs/ADMIN_REMOTE.md](docs/ADMIN_REMOTE.md#5-draufsicht-kamera-geplant)
 
 ## Vorgehen
 1. **Bestandsaufnahme per SSH:** Python, picamera2, OpenCV und Freenove-Treiber prüfen.

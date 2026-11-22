@@ -3,6 +3,12 @@
 Projektkontext, Hardware, Ziel und aktueller Stand stehen in:
 @PROJECT.md
 
+Bedienung, Hardware-Belegung (Motoren, Servos, Kamera, Akku) und bekannte Stolperfallen:
+@docs/OPERATIONS_MANUAL.md
+
+- Neue Übungsskripte in `pi/` bekommen eine passende Erklärung in `docs/exercises/<name>.md` (Lernziele, Ablauf, Aufgaben, Lösungen) und einen Eintrag in `docs/exercises/README.md`.
+- Neue Erkenntnisse zur Bedienung oder Hardware (gemessene Werte, Belegungen, Fehler und Lösungen) im Operations Manual eintragen, den Projektfortschritt im Statuslog von `PROJECT.md`.
+
 ## Arbeitsweise
 - Kommunikation auf **Deutsch**.
 - Code wird hier auf dem Windows-PC geschrieben, per **scp/ssh auf den Pi** kopiert und **dort ausgeführt**. Erkennung und Steuerung laufen auf dem Pi, nicht auf dem PC.

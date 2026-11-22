@@ -51,10 +51,13 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 - 2026-11-22: Tailscale eingerichtet (`smartcar`, `100.77.136.52`) ✅
 - 2026-11-22: Akkus geladen (8,04 V) ✅
 - 2026-11-22: Kamera-Testbild ✅
-- 2026-11-22: Servo-Belegung per Scan ermittelt ✅ (Kanal 0 = Tilt, Kanal 1 = Pan; Tilt 90 = Suchen, 110 = Nahbereich)
+- 2026-11-22: Servo-Belegung per Scan ermittelt ✅ (Kanal 0 = Tilt, Kanal 1 = Pan; Tilt 90 = Suchen, 110 = Nahbereich; geradeaus = Pan 66, nicht 90!)
 - 2026-11-22: Grün-Erkennung `pi/cv_exercise_1.py` erkennt das Blatt ✅ (HSV H 35–95, Blatt ist blaugrün)
 - 2026-11-22: Fahr-Übung `pi/drive_exercise_1.py` (vor/zurück) ✅
 - 2026-11-22: Dreh-Übung `pi/turn_exercise_1.py`: 90° per visueller Odometrie (kein Gyro vorhanden), 4 Läufe (87–91° gemessen, real knapp unter 90°) ✅. Bildwinkel nicht exakt kalibriert. Reifen und Laminat lassen die Drehrate stark schwanken (42–62°/s).
+- 2026-11-22: Übung 5 `pi/align_exercise_1.py`: Blatt ~115° rechts hinter dem Auto gefunden und ausgerichtet ✅
+- 2026-11-22: **Kamerakopf verdreht**: Pan 90 schaut ~18° nach links. Größere Pan-Werte = **links** (vorher falsch dokumentiert). Kalibriert mit `pi/calibrate_pan.py`: **geradeaus = Pan 66** ✅ (zentral in `pi/car_config.py`).
+- 2026-11-22: Übung 6 `pi/park_exercise_1.py` vorbereitet, **noch nicht getestet**. Kalibrierwerte fehlen: Geschwindigkeit cm/s, toter Winkel bei Tilt 110, Kamera-Abstand zur Automitte.
 - Freenove-Repo auf dem Pi hat lokale Änderungen: `test.py` (Motortest umgebaut), `ADC.py` (`calcPowerLevel()`)
 
 ## Weitere offene Punkte

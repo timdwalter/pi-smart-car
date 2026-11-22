@@ -23,8 +23,8 @@ Jede Übungsdatei besteht aus zwei Teilen:
 | 3 | [Vorwärts und rückwärts fahren](drive_exercise_1.md) | Motoren, PWM, Sicherheits-Checks, Ultraschall | **ja** |
 | 4 | [Um 90° drehen – ohne Gyroskop](turn_exercise_1.md) ⭐ | Visuelle Odometrie: ORB-Features, Matching, Lochkamera-Modell, Regelkreis | **ja** |
 | 4b | *geplant:* Kontinuierlich drehen mit laufender Überwachung | Optischer Fluss, hohe Bildrate, Regler mit Bremsen | **ja** |
-| 5 | *geplant:* Zum Blatt drehen | Erkennung + Drehen kombinieren | **ja** |
-| 6 | *geplant:* Hinfahren und parken | Zustandsautomat, Kalibrierung | **ja** |
+| 5 | [Blatt suchen und ausrichten](align_exercise_1.md) | Zustandsautomat, Visual Servoing, Kalibrierung des Kamerakopfs | **ja** |
+| 6 | [Hinfahren und parken](park_exercise_1.md) *(vorbereitet, noch nicht getestet)* | Toter Winkel, Koppelnavigation, Kalibrierung | **ja** |
 
 ## Voraussetzungen
 

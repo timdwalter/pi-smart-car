@@ -15,6 +15,7 @@ Bedienung, Hardware-Belegung (Motoren, Servos, Kamera, Akku) und bekannte Stolpe
 - Zugangsdaten zum Pi (`PI_HOST`, `PI_USER`, `PI_PASSWORD`) liegen in `.env` (Vorlage: `.env.example`). `.env` ist in `.gitignore` und wird **nie committet oder ausgegeben**. Skripte lesen die Werte selbst ein (z. B. Python mit `paramiko`), das Passwort wird nicht im Chat oder in Kommandozeilen angezeigt.
 - Langfristig ist SSH-Key-Login besser als Passwort-Login.
 - Den Freenove-Originalcode auf dem Pi **nicht verändern**. Er wird nur importiert bzw. als Referenz genutzt. Eigener Code liegt in einem eigenen Ordner auf dem Pi.
+- Kalibrierwerte, die mehrere Skripte brauchen (z. B. `PAN_CENTER`, Tilt-Winkel), stehen zentral in `pi/car_config.py`. Skripte importieren sie von dort, statt Werte wie Pan 90 fest einzutragen (Pan 90 ist bei diesem Auto **nicht** geradeaus).
 - Debug-Ausgaben (z. B. Kamerabilder mit Erkennungs-Overlay) auf dem Pi speichern und zum Ansehen auf den PC holen.
 
 ## Sicherheit beim Testen

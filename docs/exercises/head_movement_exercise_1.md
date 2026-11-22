@@ -88,6 +88,7 @@ Danach die Bilder auf den eigenen Rechner holen und nebeneinanderlegen.
    *Achtung:* Die Kommentare im Freenove-Beispielcode legen eine andere Belegung nahe. Deshalb lohnt es sich, selbst zu messen!
 2. Größere Werte = Kamera schaut **nach unten**.
 3. **Tilt 90**: Der Horizont liegt im oberen Viertel des Bildes. Bei 100 ist fast nur noch Boden direkt vor dem Auto zu sehen.
-4. Ab ca. **Pan 130** ist der eigene Reifen unten im Bild. Ein schwarzer Reifen stört die Grün-Erkennung zwar nicht, bei anderen Farben könnte er aber stören.
+4. Ab ca. **Pan 130** ist der eigene Reifen unten im Bild.
+5. **Nachtrag – Pan-Richtung und schiefer Kopf:** Größere Pan-Werte schauen nach **links** (ca. 1,1° pro Einheit). Außerdem ist der Kamerakopf mechanisch verdreht: Bei Pan 90 schaut er ~18° nach links, geradeaus ist **Pan 66**. Aufgefallen ist das erst in Übung 5. Lehre: **Nullpunkt und Richtung immer mit einem bekannten Ziel prüfen** (siehe `calibrate_pan.py`). Ein schwarzer Reifen stört die Grün-Erkennung zwar nicht, bei anderen Farben könnte er aber stören.
 
 </details>

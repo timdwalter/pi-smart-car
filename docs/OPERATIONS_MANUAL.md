@@ -143,11 +143,17 @@ Kleinerer Wert = Kamera nach **oben**, größerer Wert = nach **unten**.
 Getestet: 50–110. Über 110 ist noch nicht getestet, wegen eines möglichen mechanischen Anschlags vorsichtig herantasten.
 
 ### Kanal `'1'` = Pan (links/rechts)
+
+⚠️ **Korrigiert am 2026-11-22:** **Größere Werte schauen nach LINKS**, ca. **0,85° pro Einheit** (kalibriert im Bereich 65–85).
+
+⚠️ **Der Kamerakopf ist mechanisch verdreht: Bei Pan 90 schaut er ca. 18° nach links.** Pan 90 ist also **nicht** geradeaus. **Geradeaus = Pan 66** (`PAN_CENTER` in `pi/car_config.py`, kalibriert mit `pi/calibrate_pan.py`). Alle Skripte, die das Auto auf etwas ausrichten, müssen `PAN_CENTER` verwenden.
+
 | Winkel | Blick |
 |---|---|
-| 60 | links |
-| 90 | ungefähr Mitte |
-| 150 | rechts. Ab ca. 130 ist der eigene Reifen unten im Bild |
+| 60 | rechts |
+| **66** | **geradeaus** (`PAN_CENTER`, kalibriert) |
+| 90 | ca. 18° links |
+| 150 | weit links. Ab ca. 130 ist der eigene Reifen unten im Bild |
 
 Getestet: 60–150.
 
@@ -279,3 +285,40 @@ Ausführliche Erklärungen mit Aufgaben: [docs/exercises/](exercises/README.md)
 - Bewusst **schrittweise** (Stop-and-Go). Kontinuierliches Drehen mit laufender Überwachung ist eine eigene, geplante Übung.
 - Erster Testlauf: Ziel 90°, gemessen **87,2°**. Real noch nicht nachgemessen. `HFOV_DEG = 53,5` stammt aus dem Datenblatt und ist **noch nicht kalibriert**.
 - **Nachrüst-Option:** MPU-6050 (I2C) für eine Gyro-Messung.
+
+### Zentrale Konfiguration (`pi/car_config.py`)
+Kalibrierwerte, die mehrere Skripte brauchen, stehen nur an **einer** Stelle:
+
+| Wert | Bedeutung | Stand |
+|---|---|---|
+| `PAN_CENTER` | Pan-Wert für „Kamera schaut geradeaus“ | **66** (kalibriert 2026-11-22) |
+| `TILT_SEARCH` | Tilt zum Suchen | 90 |
+| `TILT_NEAR` | Tilt für den Nahbereich | 110 |
+
+### Pan kalibrieren (`calibrate_pan.py`)
+1. Das grüne Blatt **exakt gerade vor das Auto** legen (Blattmitte auf der Längsachse, 50–100 cm entfernt).
+2. `python3 calibrate_pan.py 70 95 5` ausführen.
+3. Das Skript misst bei jedem Pan-Wert den Winkel zum Blatt und bestimmt per linearer Regression den Pan-Wert für 0°.
+4. Den Wert als `PAN_CENTER` in `pi/car_config.py` eintragen und auf den Pi kopieren.
+
+Kalibrierung 2026-11-22 (Blatt exakt vor dem Auto, Tilt 90):
+
+| Pan | Blatt liegt bei |
+|---|---|
+| 65 | −0,7° |
+| 70 | +3,2° |
+| 75 | +7,4° |
+| 80 | +11,9° |
+| 85 | +16,2° |
+| 90 | +17,9° |
+| 95 | +19,7° |
+| 100 | +21,5° |
+
+Nulldurchgang zwischen 65 und 70 → **66**. Ab Pan 90 wird die Kurve flacher, weil das Blatt dort an den rechten Bildrand stößt und abgeschnitten wird. Deshalb wird nur der lineare Bereich 65–85 verwendet (die Regression über alle Werte ergab 63,9). Kontrolle bei Pan 66: Blatt bei −0,5°.
+
+### Ausrichten (`align_exercise_1.py`)
+- Testlauf 2026-11-22: Blatt ~115° rechts hinter dem Auto, nach 7 Suchschritten gefunden, nach 2 Korrekturen ausgerichtet (+2,8°).
+- **Achtung:** Dieser Lauf lief noch mit Pan 90. Wegen des verdrehten Kamerakopfs (Pan 90 = ~18° links) zeigte das Auto danach deutlich rechts am Blatt vorbei. Seitdem nutzt das Skript `PAN_CENTER`.
+
+### Parken (`park_exercise_1.py`)
+- Vorbereitet, **noch nicht getestet**. Es fehlen `SPEED_CM_PER_S`, `TOTER_WINKEL_CM` und `KAMERA_VOR_MITTE_CM`. Hilfe: `python3 park_exercise_1.py kalibrieren`.

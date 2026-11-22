@@ -233,6 +233,10 @@ export MSYS_NO_PATHCONV=1
 |---|---|---|
 | `head_movement_exercise_1.py` | Kamerakopf durch Winkel fahren, je ein Bild | `python3 head_movement_exercise_1.py <kanal> <winkel...>` |
 | `cv_exercise_1.py` | Grünes Blatt im Bild erkennen | `python3 cv_exercise_1.py [tilt=90] [pan=90]` |
+| `drive_exercise_1.py` | Vor- und zurückfahren mit Akku- und Ultraschall-Check | `python3 drive_exercise_1.py [speed=1500] [sekunden=2]` (speed 0 = Trockenlauf) |
+| `turn_exercise_1.py` | Auf der Stelle um einen Winkel drehen, gemessen per Kamera | `python3 turn_exercise_1.py [winkel=90] [links\|rechts] [speed=2000]` (speed 0 = Trockenlauf) |
+
+Ausführliche Erklärungen mit Aufgaben: [docs/exercises/](exercises/README.md)
 
 ### Grün-Erkennung (`cv_exercise_1.py`)
 - Ablauf: Bild (640×480) → HSV → `inRange` → Morphologie (Öffnen/Schließen) → größte Kontur → Schwerpunkt
@@ -258,3 +262,20 @@ export MSYS_NO_PATHCONV=1
   | 100 | 0,11 | 1,0 % |
   Bei Tilt 100 klebt das Blatt am oberen Bildrand, deshalb wird mit **Tilt 90 gesucht**.
 - Die Kamera sitzt nur ca. 10 cm über dem Boden. Ein entferntes Blatt erscheint deshalb immer als flacher Streifen.
+
+### Fahren (`drive_exercise_1.py`)
+- 1500 für 1 s vor und zurück funktioniert. Beim Anfahren bricht der Akku kurz von ~7,9 V auf ~7,3 V ein.
+- Ultraschall vorne zeigt im freien Raum ~150 cm.
+- Geschwindigkeit in cm/s ist **noch nicht kalibriert**.
+
+### Drehen ohne Gyroskop (`turn_exercise_1.py`)
+- **Sensorlage:** Am I2C-Bus (`sudo i2cdetect -y 1`) hängen nur `0x40` (PCA9685, Motoren/Servos) und `0x48` (ADS7830, ADC). Es gibt **kein Gyroskop/IMU** (MPU-6050 wäre `0x68`) und keine Radencoder.
+- **Verfahren:** visuelle Odometrie. Foto, Drehimpuls, Foto, ORB-Features matchen, horizontale Verschiebung über das Lochkamera-Modell in Grad umrechnen (f = 320 / tan(53,5°/2) ≈ 634 px), Median mit Ausreißer-Filter, aufsummieren.
+- **Drehrate** bei Speed 2000 auf Laminat: **42–62°/s**, schwankt stark je nach Ausrichtung. Die Reifen des Kits greifen beim Skid-Steering ungleichmäßig.
+- Impulse höchstens **0,3 s** (~18°), sonst überlappen die Bilder zu wenig. Kamera dabei auf Tilt 80 / Pan 90.
+- Weiße Wände oder Heizung liefern kaum Features. Dann wird der Winkel aus der Drehrate geschätzt (max. 2× hintereinander).
+- Features nur in den **oberen 55 % des Bildes** (`ROI_TOP_FRACTION`), weil der Boden nah ist und spiegelt. Die Ausreißer-Toleranz wächst mit dem Winkel (Parallaxe, Kamera sitzt vor der Drehachse).
+- Testläufe: 87,2° / 91,4° / 87,8° / 89,3° gemessen, real jeweils **knapp unter 90°** (nach Augenmaß), Genauigkeit grob ±5°.
+- Bewusst **schrittweise** (Stop-and-Go). Kontinuierliches Drehen mit laufender Überwachung ist eine eigene, geplante Übung.
+- Erster Testlauf: Ziel 90°, gemessen **87,2°**. Real noch nicht nachgemessen. `HFOV_DEG = 53,5` stammt aus dem Datenblatt und ist **noch nicht kalibriert**.
+- **Nachrüst-Option:** MPU-6050 (I2C) für eine Gyro-Messung.

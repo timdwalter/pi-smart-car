@@ -6,7 +6,7 @@ Projektkontext, Hardware, Ziel und aktueller Stand stehen in:
 Bedienung, Hardware-Belegung (Motoren, Servos, Kamera, Akku) und bekannte Stolperfallen:
 @docs/OPERATIONS_MANUAL.md
 
-- Neue Übungsskripte in `pi/` bekommen eine passende Erklärung in `docs/exercises/<name>.md` (Lernziele, Ablauf, Aufgaben, Lösungen) und einen Eintrag in `docs/exercises/README.md`.
+- Neue Übungsskripte in `pi/` bekommen eine passende Erklärung in `docs/exercises/<name>.md` und einen Eintrag in `docs/exercises/README.md`. Aufbau jeder Datei: **Lernziele**, dann **Teil A – Lecture** (Problem, Theorie Schritt für Schritt, Code, Bilder und Ergebnisse echter Testläufe), dann **Teil B – Exercise** (Sicherheit, Ausprobieren, Aufgaben, Lösungen in `<details>`). Bilder aus Testläufen dauerhaft in `docs/exercises/images/` ablegen. Die Texte sind neutral formuliert, ohne „du“.
 - Neue Erkenntnisse zur Bedienung oder Hardware (gemessene Werte, Belegungen, Fehler und Lösungen) im Operations Manual eintragen, den Projektfortschritt im Statuslog von `PROJECT.md`.
 
 ## Arbeitsweise

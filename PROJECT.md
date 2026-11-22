@@ -53,6 +53,8 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 - 2026-11-22: Kamera-Testbild ✅
 - 2026-11-22: Servo-Belegung per Scan ermittelt ✅ (Kanal 0 = Tilt, Kanal 1 = Pan; Tilt 90 = Suchen, 110 = Nahbereich)
 - 2026-11-22: Grün-Erkennung `pi/cv_exercise_1.py` erkennt das Blatt ✅ (HSV H 35–95, Blatt ist blaugrün)
+- 2026-11-22: Fahr-Übung `pi/drive_exercise_1.py` (vor/zurück) ✅
+- 2026-11-22: Dreh-Übung `pi/turn_exercise_1.py`: 90° per visueller Odometrie (kein Gyro vorhanden), 4 Läufe (87–91° gemessen, real knapp unter 90°) ✅. Bildwinkel nicht exakt kalibriert. Reifen und Laminat lassen die Drehrate stark schwanken (42–62°/s).
 - Freenove-Repo auf dem Pi hat lokale Änderungen: `test.py` (Motortest umgebaut), `ADC.py` (`calcPowerLevel()`)
 
 ## Weitere offene Punkte
@@ -66,7 +68,7 @@ Details zu allen Punkten: [docs/OPERATIONS_MANUAL.md](docs/OPERATIONS_MANUAL.md)
 1. ✅ **Bestandsaufnahme per SSH:** Python, picamera2, OpenCV und Freenove-Treiber prüfen.
 2. ✅ **Smoke-Test:** Kamerabild aufnehmen, Motoren kurz ansteuern.
 3. ⏳ **Grün-Erkennung (OpenCV, HSV):** Debug-Bilder speichern und am PC ansehen.
-4. **Fahrlogik als Zustandsautomat:**
+4. ⏳ **Fahrlogik als Zustandsautomat:** (Bausteine Fahren ✅ und Drehen ✅ vorhanden)
    - `SUCHEN`: auf der Stelle drehen, bis Grün im Bild ist
    - `AUSRICHTEN`: drehen, bis das Blatt horizontal mittig im Bild liegt
    - `ANFAHREN`: geradeaus fahren und dabei nachkorrigieren

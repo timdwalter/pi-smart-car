@@ -39,6 +39,12 @@ Alle Werte stehen an **einer** Stelle, in `pi/car_config.py`. So muss man sie na
 
 Ausführlich in [Übung 5](align_exercise_1.md): Der Kamerakopf ist verdreht, bei Pan 90 schaut er ~18° nach links. Mit dem Blatt **exakt vor dem Auto** als bekanntem Ziel ergab `calibrate_pan.py`: **geradeaus = Pan 66**.
 
+| ![Pan 65](images/calpan_65.jpg) | ![Pan 90](images/calpan_90.jpg) |
+|---|---|
+| Pan 65: Das Blatt liegt mittig (−0,7°) | Pan 90: Dasselbe Blatt liegt weit rechts (+17,9°), die Kamera schaut also nach links |
+
+*Das Blatt liegt exakt vor dem Auto. Nur der Pan-Wert ändert sich.*
+
 Der Kopf ist außerdem **mechanisch instabil**. Kabel verschieben sich und verkippen ihn, und nach dem Nachziehen der Schrauben kann der Nullpunkt anders liegen. → Vor jeder Session kurz prüfen.
 
 ### 2. Wie schnell fährt das Auto?

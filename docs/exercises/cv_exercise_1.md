@@ -103,6 +103,9 @@ Aus den **Momenten** der Kontur ergibt sich ihr Schwerpunkt `(cx, cy)`. Daraus b
 
 Später (in Übung 6) lag das Blatt **150 cm** vor dem Auto, und die Erkennung fand es **nicht**, obwohl es im Bild klar zu sehen war:
 
+![Blatt nicht erkannt](images/pan_check_nach_schrauben.jpg)
+*Vorher: Das Blatt liegt als grüner Streifen hinten im Bild, die Erkennung meldet „KEIN GRUEN“.*
+
 ![Blatt aus 150 cm](images/cv_fern_150cm.jpg)
 *Nach der Korrektur erkannt: ein flacher Streifen von nur ~116 × 17 Pixeln, 0,1 % des Bildes.*
 

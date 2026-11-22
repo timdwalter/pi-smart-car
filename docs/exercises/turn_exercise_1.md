@@ -198,6 +198,12 @@ Ideal wäre eine **flüssige Drehung**, bei der die Kamera **laufend** misst und
 | 5 | 0,30 s | +19,1° | 89 | 83,1° |
 | 6 | 0,09 s | +4,1° | 200 | **87,2°** |
 
+| ![Schritt 1](images/turn_matches_1.jpg) | ![Schritt 2](images/turn_matches_2.jpg) | ![Schritt 6](images/turn_matches_6.jpg) |
+|---|---|---|
+| Schritt 1: +14,7°, 78 Punkte | Schritt 2: +16,5°, 60 Punkte | Schritt 6: Feinkorrektur +4,1°, 200 Punkte |
+
+*Bei gut strukturierter Umgebung (Tisch- und Stuhlbeine) laufen die Zuordnungen schön parallel. Je kleiner die Drehung, desto mehr überlappen die Bilder und desto mehr Punkte passen zusammen.*
+
 Drehrate bei Speed 2000: **~55–60°/s**. In Schritt 3 schaute die Kamera auf die weiße Heizung bzw. Wand, deshalb wurde geschätzt.
 
 #### Weitere Läufe: Startposition mit Blick auf die Wand (2026-11-22)

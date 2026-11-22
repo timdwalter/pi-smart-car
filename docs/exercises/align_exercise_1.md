@@ -126,6 +126,9 @@ So werden die Impulse mit der Zeit passender, trotz der schwankenden Reifen.
 
 Startposition: Blick auf die Wand, das Blatt liegt ca. 110–120° rechts hinter dem Auto.
 
+![Suche Start](images/align_suche_start.jpg)
+*Schritt 1: Die Kamera sieht nur Tisch- und Stuhlbeine, „KEIN GRUEN“. Das Auto muss suchen.*
+
 | Schritt | Zustand | Was passiert ist |
 |---|---|---|
 | 1–4 | SUCHEN | je ~16,5° nach rechts, **geschätzt** (weiße Wand, zu wenige Punkte) |
